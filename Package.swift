@@ -45,6 +45,7 @@ let package = Package(
                 "SymbolKit",
                 "CLMDB",
                 .product(name: "Crypto", package: "swift-crypto"),
+                .product(name: "SymbolGraphUMLParser", package: "symbolgraph-uml-parser"),
             ],
             swiftSettings: swiftSettings
         ),
@@ -138,6 +139,7 @@ if ProcessInfo.processInfo.environment["SWIFTCI_USE_LOCAL_DEPS"] == nil {
         .package(url: "https://github.com/apple/swift-argument-parser", .upToNextMinor(from: "1.0.1")),
         .package(name: "SymbolKit", url: "https://github.com/apple/swift-docc-symbolkit", .branch("main")),
         .package(url: "https://github.com/apple/swift-crypto.git", .upToNextMinor(from: "1.1.2")),
+        .package(path: "../../personal-projects/symbolgraph-uml-parser"),
     ]
     
     // SwiftPM command plugins are only supported by Swift version 5.6 and later.

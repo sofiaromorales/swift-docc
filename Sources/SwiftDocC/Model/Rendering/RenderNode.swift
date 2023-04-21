@@ -79,6 +79,9 @@ import Foundation
 /// - ``seeAlsoSectionsVariants``
 /// - ``deprecationSummaryVariants``
 ///
+///Data specific for the top level node
+/// - graphRepresentation
+///
 /// ### Sample Code Data
 ///
 /// Data specific for sample code nodes.
@@ -120,6 +123,9 @@ public struct RenderNode: VariantContainer {
     
     /// The kind of this documentation node.
     public var kind: Kind
+    
+    /// Contains a UML class diagram in text modeling language of the public API
+    public var graphRepresentation = ""
         
     /// The references used in the render node. These can be references to other nodes, media, and more.
     ///

@@ -288,11 +288,13 @@ public struct DocumentationConverter: DocumentationConverterProtocol {
                         return
                     }
 
-                    guard let renderNode = try converter.renderNode(for: entity, at: source) else {
+                    guard var renderNode = try converter.renderNode(for: entity, at: source) else {
                         // No render node was produced for this entity, so just skip it.
                         return
                     }
-                    
+                    if (entity.kind.name == "Module") {
+                        renderNode.graphRepresentation = context.umlGraph
+                    }
                     try outputConsumer.consume(renderNode: renderNode)
 
                     switch documentationCoverageOptions.level {

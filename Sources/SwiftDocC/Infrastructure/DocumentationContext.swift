@@ -11,6 +11,7 @@
 import Foundation
 import Markdown
 import SymbolKit
+import SymbolGraphUMLParser
 
 /// A type that provides information about documentation bundles and their content.
 public protocol DocumentationContextDataProvider {
@@ -80,6 +81,9 @@ public typealias BundleIdentifier = String
 /// - ``parents(of:)``
 ///
 public class DocumentationContext: DocumentationContextDataProviderDelegate {
+    
+    var umlGraph = ""
+    var umlParser: SymbolGraphUMLParser = SymbolGraphUMLParser()
 
     /// An error that's encountered while interacting with a ``SwiftDocC/DocumentationContext``.
     public enum ContextError: DescribedError {
@@ -1485,6 +1489,26 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
                     documentationCacheBasedLinkResolver.registerReference(reference)
                 }
             }
+            
+            for (_, relationships) in combinedRelationships {
+                for edge in relationships {
+                    var symbolJSON = String(data: try JSONEncoder().encode(nodeWithSymbolIdentifier(edge.target)?.symbol), encoding: .utf8)
+                    
+                    umlParser.parse(
+                        symbolJSON: symbolJSON!
+                    )
+                    
+                    symbolJSON = String(data: try JSONEncoder().encode(nodeWithSymbolIdentifier(edge.source)?.symbol), encoding: .utf8)
+                    let parentSymbolJSON = String(data: try JSONEncoder().encode(nodeWithSymbolIdentifier(edge.target)?.symbol), encoding: .utf8)
+                    
+                    umlParser.parse(
+                        relationType: edge.kind.rawValue,
+                        symbolJSON: symbolJSON!,
+                        parentSymbolJSON: parentSymbolJSON
+                    )
+                }
+            }
+            umlGraph = umlParser.getTextDiagram()
 
             return (moduleReferences: Set(moduleReferences.values), urlHierarchy: symbolsURLHierarchy)
         }
