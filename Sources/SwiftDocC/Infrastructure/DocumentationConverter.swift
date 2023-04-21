@@ -43,6 +43,7 @@ public struct DocumentationConverter: DocumentationConverterProtocol {
     let documentationCoverageOptions: DocumentationCoverageOptions
     let bundleDiscoveryOptions: BundleDiscoveryOptions
     let diagnosticEngine: DiagnosticEngine
+    let experimentalSymbolsClassDiagramExport: Bool
     
     private(set) var context: DocumentationContext
     private let workspace: DocumentationWorkspace
@@ -133,7 +134,8 @@ public struct DocumentationConverter: DocumentationConverterProtocol {
         emitSymbolAccessLevels: Bool = false,
         sourceRepository: SourceRepository? = nil,
         isCancelled: Synchronized<Bool>? = nil,
-        diagnosticEngine: DiagnosticEngine = .init()
+        diagnosticEngine: DiagnosticEngine = .init(),
+        experimentalSymbolsClassDiagramExport: Bool = false
     ) {
         self.rootURL = documentationBundleURL
         self.emitDigest = emitDigest
@@ -149,6 +151,7 @@ public struct DocumentationConverter: DocumentationConverterProtocol {
         self.sourceRepository = sourceRepository
         self.isCancelled = isCancelled
         self.diagnosticEngine = diagnosticEngine
+        self.experimentalSymbolsClassDiagramExport = experimentalSymbolsClassDiagramExport
         
         // Inject current platform versions if provided
         if let currentPlatforms = currentPlatforms {
@@ -292,7 +295,7 @@ public struct DocumentationConverter: DocumentationConverterProtocol {
                         // No render node was produced for this entity, so just skip it.
                         return
                     }
-                    if (entity.kind.name == "Module") {
+                    if (entity.kind.name == "Module" && experimentalSymbolsClassDiagramExport == true) {
                         renderNode.graphRepresentation = context.umlGraph
                     }
                     try outputConsumer.consume(renderNode: renderNode)

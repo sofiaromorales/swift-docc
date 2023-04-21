@@ -81,6 +81,19 @@ extension Docc {
         /// Defaults to false.
         @Flag(help: "Writes additional metadata files to the output directory.")
         public var emitDigest = false
+        
+        /// A user-provided value that is true if the UML class diagram of the
+        /// symbol graph should be produced.
+        ///
+        /// Defaults to false.
+        @Flag(
+            name: .customLong("experimental-symbols-class-diagram-export"),
+            help: ArgumentHelp(
+                "Emits a UML class diagram text representation of the symbol graph.",
+                discussion: "The diagram is exported in the DocC archive."
+            )
+        )
+        public var experimentalSymbolsClassDiagramExport = false
 
         /// A user-provided value that is true if the LMDB representation of the
         /// navigator index should be produced.

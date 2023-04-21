@@ -85,7 +85,8 @@ extension ConvertAction {
             experimentalEnableCustomTemplates: convert.experimentalEnableCustomTemplates,
             transformForStaticHosting: convert.transformForStaticHosting,
             hostingBasePath: convert.hostingBasePath,
-            sourceRepository: SourceRepository(from: convert.sourceRepositoryArguments)
+            sourceRepository: SourceRepository(from: convert.sourceRepositoryArguments),
+            experimentalSymbolsClassDiagramExport: convert.experimentalSymbolsClassDiagramExport
         )
     }
 }

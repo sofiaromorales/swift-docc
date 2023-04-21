@@ -39,6 +39,7 @@ public struct ConvertAction: Action, RecreatingContext {
     let documentationCoverageOptions: DocumentationCoverageOptions
     let diagnosticLevel: DiagnosticSeverity
     let diagnosticEngine: DiagnosticEngine
+    let experimentalSymbolsClassDiagramExport: Bool
     
     let transformForStaticHosting: Bool
     let hostingBasePath: String?
@@ -105,7 +106,8 @@ public struct ConvertAction: Action, RecreatingContext {
         experimentalEnableCustomTemplates: Bool = false,
         transformForStaticHosting: Bool = false,
         hostingBasePath: String? = nil,
-        sourceRepository: SourceRepository? = nil
+        sourceRepository: SourceRepository? = nil,
+        experimentalSymbolsClassDiagramExport: Bool = false
     ) throws
     {
         self.rootURL = documentationBundleURL
@@ -123,6 +125,7 @@ public struct ConvertAction: Action, RecreatingContext {
         self.transformForStaticHosting = transformForStaticHosting
         self.hostingBasePath = hostingBasePath
         self.sourceRepository = sourceRepository
+        self.experimentalSymbolsClassDiagramExport = experimentalSymbolsClassDiagramExport
         
         let filterLevel: DiagnosticSeverity
         if analyze {
@@ -192,7 +195,8 @@ public struct ConvertAction: Action, RecreatingContext {
             bundleDiscoveryOptions: bundleDiscoveryOptions,
             sourceRepository: sourceRepository,
             isCancelled: isCancelled,
-            diagnosticEngine: self.diagnosticEngine
+            diagnosticEngine: self.diagnosticEngine,
+            experimentalSymbolsClassDiagramExport: self.experimentalSymbolsClassDiagramExport
         )
     }
     
@@ -214,7 +218,8 @@ public struct ConvertAction: Action, RecreatingContext {
         transformForStaticHosting: Bool,
         hostingBasePath: String?,
         sourceRepository: SourceRepository? = nil,
-        temporaryDirectory: URL
+        temporaryDirectory: URL,
+        experimentalSymbolsClassDiagramExport: Bool = false
     ) throws {
         try self.init(
             documentationBundleURL: documentationBundleURL,
@@ -238,7 +243,8 @@ public struct ConvertAction: Action, RecreatingContext {
             transformForStaticHosting: transformForStaticHosting,
             hostingBasePath: hostingBasePath,
             sourceRepository: sourceRepository,
-            temporaryDirectory: temporaryDirectory
+            temporaryDirectory: temporaryDirectory,
+            experimentalSymbolsClassDiagramExport: experimentalSymbolsClassDiagramExport
         )
     }
     
@@ -266,7 +272,8 @@ public struct ConvertAction: Action, RecreatingContext {
         transformForStaticHosting: Bool,
         hostingBasePath: String?,
         sourceRepository: SourceRepository? = nil,
-        temporaryDirectory: URL
+        temporaryDirectory: URL,
+        experimentalSymbolsClassDiagramExport: Bool = false
     ) throws {
         // Note: This public initializer exists separately from the above internal one
         // because the FileManagerProtocol type we use to enable mocking in tests
@@ -298,7 +305,8 @@ public struct ConvertAction: Action, RecreatingContext {
             experimentalEnableCustomTemplates: experimentalEnableCustomTemplates,
             transformForStaticHosting: transformForStaticHosting,
             hostingBasePath: hostingBasePath,
-            sourceRepository: sourceRepository
+            sourceRepository: sourceRepository,
+            experimentalSymbolsClassDiagramExport: experimentalSymbolsClassDiagramExport
         )
     }
 
