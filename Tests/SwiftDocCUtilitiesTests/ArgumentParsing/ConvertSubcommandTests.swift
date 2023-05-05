@@ -425,6 +425,23 @@ class ConvertSubcommandTests: XCTestCase {
         }
     }
     
+    func testExperimentalSymbolsClassDiagramExport() throws {
+        do {
+            var convertOptions = try Docc.Convert.parse([
+                testBundleURL.path,
+                "--experimental-symbols-class-diagram-export",
+            ])
+            
+            XCTAssertTrue(convertOptions.experimentalSymbolsClassDiagramExport)
+            
+            convertOptions = try Docc.Convert.parse([
+                testBundleURL.path,
+            ])
+            
+            XCTAssertFalse(convertOptions.experimentalSymbolsClassDiagramExport)
+        }
+    }
+    
     func testTransformForStaticHostingFlagWithHTMLTemplate() throws {
         setenv(TemplateOption.environmentVariableKey, testTemplateURL.path, 1)
         
