@@ -41,7 +41,7 @@ public protocol DocumentationContextDataProviderDelegate: AnyObject {
     ///   - bundle: The bundle that was added.
     ///
     /// - Note: This method is called after the `dataProvider` has been added the bundle to its `bundles` property.
-    func dataProvider(_ dataProvider: DocumentationContextDataProvider, didAddBundle bundle:  DocumentationBundle) throws
+    func dataProvider(_ dataProvider: DocumentationContextDataProvider, didAddBundle bundle:  DocumentationBundle, experimentalSymbolsClassDiagramExport: Bool) throws
     
     /// Called when the `dataProvider` has removed a documentation bundle from its list of `bundles`.
     ///
@@ -81,6 +81,7 @@ public typealias BundleIdentifier = String
 /// - ``parents(of:)``
 ///
 public class DocumentationContext: DocumentationContextDataProviderDelegate {
+    
     
     var umlGraph = ""
     var umlParser: SymbolGraphUMLParser = SymbolGraphUMLParser()
@@ -349,12 +350,13 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
     /// - Parameters:
     ///   - dataProvider: The provider that added this bundle.
     ///   - bundle: The bundle that was added.
-    public func dataProvider(_ dataProvider: DocumentationContextDataProvider, didAddBundle bundle: DocumentationBundle) throws {
+    public func dataProvider(_ dataProvider: DocumentationContextDataProvider, didAddBundle bundle: DocumentationBundle, experimentalSymbolsClassDiagramExport: Bool = false)
+    throws {
         try benchmark(wrap: Benchmark.Duration(id: "bundle-registration")) {
             // Enable reference caching for this documentation bundle.
             ResolvedTopicReference.enableReferenceCaching(for: bundle.identifier)
             
-            try self.register(bundle)
+            try self.register(bundle, experimentalSymbolsClassDiagramExport: experimentalSymbolsClassDiagramExport)
         }
     }
     
@@ -1158,7 +1160,7 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
     ///
     /// - Parameter bundle: The bundle to load symbol graph files from.
     /// - Returns: A pair of the references to all loaded modules and the hierarchy of all the loaded symbol's references.
-    private func registerSymbols(from bundle: DocumentationBundle, symbolGraphLoader: SymbolGraphLoader) throws -> (moduleReferences: Set<ResolvedTopicReference>, urlHierarchy: BidirectionalTree<ResolvedTopicReference>) {
+    private func registerSymbols(from bundle: DocumentationBundle, symbolGraphLoader: SymbolGraphLoader, experimentalSymbolsClassDiagramExport: Bool = false) throws -> (moduleReferences: Set<ResolvedTopicReference>, urlHierarchy: BidirectionalTree<ResolvedTopicReference>) {
         // Making sure that we correctly let decoding memory get released, do not remove the autorelease pool.
         return try autoreleasepool { [documentationCacheBasedLinkResolver] () -> (Set<ResolvedTopicReference>, BidirectionalTree<ResolvedTopicReference>) in
             /// A tree of the symbol hierarchy as defined by the combined symbol graph.
@@ -1489,26 +1491,27 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
                     documentationCacheBasedLinkResolver.registerReference(reference)
                 }
             }
-            
-            for (_, relationships) in combinedRelationships {
-                for edge in relationships {
-                    var symbolJSON = String(data: try JSONEncoder().encode(nodeWithSymbolIdentifier(edge.target)?.symbol), encoding: .utf8)
-                    
-                    umlParser.parse(
-                        symbolJSON: symbolJSON!
-                    )
-                    
-                    symbolJSON = String(data: try JSONEncoder().encode(nodeWithSymbolIdentifier(edge.source)?.symbol), encoding: .utf8)
-                    let parentSymbolJSON = String(data: try JSONEncoder().encode(nodeWithSymbolIdentifier(edge.target)?.symbol), encoding: .utf8)
-                    
-                    umlParser.parse(
-                        relationType: edge.kind.rawValue,
-                        symbolJSON: symbolJSON!,
-                        parentSymbolJSON: parentSymbolJSON
-                    )
+            if (experimentalSymbolsClassDiagramExport) {
+                for (_, relationships) in combinedRelationships {
+                    for edge in relationships {
+                        var symbolJSON = String(data: try JSONEncoder().encode(nodeWithSymbolIdentifier(edge.target)?.symbol), encoding: .utf8)
+                        
+                        umlParser.parse(
+                            symbolJSON: symbolJSON!
+                        )
+                        
+                        symbolJSON = String(data: try JSONEncoder().encode(nodeWithSymbolIdentifier(edge.source)?.symbol), encoding: .utf8)
+                        let parentSymbolJSON = String(data: try JSONEncoder().encode(nodeWithSymbolIdentifier(edge.target)?.symbol), encoding: .utf8)
+                        
+                        umlParser.parse(
+                            relationType: edge.kind.rawValue,
+                            symbolJSON: symbolJSON!,
+                            parentSymbolJSON: parentSymbolJSON
+                        )
+                    }
                 }
+                umlGraph = umlParser.getTextDiagram()
             }
-            umlGraph = umlParser.getTextDiagram()
 
             return (moduleReferences: Set(moduleReferences.values), urlHierarchy: symbolsURLHierarchy)
         }
@@ -2123,9 +2126,8 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
     /**
      Register a documentation bundle with this context.
      */
-    private func register(_ bundle: DocumentationBundle) throws {
+    private func register(_ bundle: DocumentationBundle, experimentalSymbolsClassDiagramExport: Bool = false) throws {
         try shouldContinueRegistration()
-        
         // Note: Each bundle is registered and processed separately.
         // Documents and symbols may both reference each other so the bundle is registered in 4 steps
         
@@ -2260,7 +2262,7 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
         }
         
         let rootPages = registerRootPages(from: rootPageArticles, in: bundle)
-        let (moduleReferences, symbolsURLHierarchy) = try registerSymbols(from: bundle, symbolGraphLoader: symbolGraphLoader)
+        let (moduleReferences, symbolsURLHierarchy) = try registerSymbols(from: bundle, symbolGraphLoader: symbolGraphLoader, experimentalSymbolsClassDiagramExport: experimentalSymbolsClassDiagramExport)
         // We don't need to keep the loader in memory after we've registered all symbols.
         symbolGraphLoader = nil
         

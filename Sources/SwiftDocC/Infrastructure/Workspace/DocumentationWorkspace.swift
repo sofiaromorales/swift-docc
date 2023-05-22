@@ -112,7 +112,7 @@ public class DocumentationWorkspace: DocumentationContextDataProvider {
     /// Adding a data provider also adds the documentation bundles that it provides, and notifies the ``delegate`` of the added bundles.
     ///
     /// - Parameter provider: The workspace data provider to add to the workspace.
-    public func registerProvider(_ provider: DocumentationWorkspaceDataProvider, options: BundleDiscoveryOptions = .init()) throws {
+    public func registerProvider(_ provider: DocumentationWorkspaceDataProvider, options: BundleDiscoveryOptions = .init(), experimentalSymbolsClassDiagramExport: Bool = false) throws {
         // We must add the provider before adding the bundle so that the delegate
         // may start making requests immediately.
         providers[provider.identifier] = provider
@@ -120,7 +120,7 @@ public class DocumentationWorkspace: DocumentationContextDataProvider {
         for bundle in try provider.bundles(options: options) {
             bundles[bundle.identifier] = bundle
             bundleToProvider[bundle.identifier] = provider.identifier
-            try delegate?.dataProvider(self, didAddBundle: bundle)
+            try delegate?.dataProvider(self, didAddBundle: bundle, experimentalSymbolsClassDiagramExport: experimentalSymbolsClassDiagramExport)
         }
     }
 

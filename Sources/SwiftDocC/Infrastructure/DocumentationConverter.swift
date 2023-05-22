@@ -212,7 +212,7 @@ public struct DocumentationConverter: DocumentationConverterProtocol {
         cancelTimer.resume()
         
         // Start bundle registration
-        try workspace.registerProvider(dataProvider, options: bundleDiscoveryOptions)
+        try workspace.registerProvider(dataProvider, options: bundleDiscoveryOptions, experimentalSymbolsClassDiagramExport: experimentalSymbolsClassDiagramExport)
         self.currentDataProvider = dataProvider
 
         // Bundle registration is finished - stop the timer and reset the context cancellation state.

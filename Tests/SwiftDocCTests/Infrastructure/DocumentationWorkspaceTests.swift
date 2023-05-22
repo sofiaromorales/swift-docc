@@ -193,7 +193,7 @@ class DocumentationWorkspaceTests: XCTestCase {
         }
         var record: [Event] = []
         
-        func dataProvider(_ dataProvider: DocumentationContextDataProvider, didAddBundle bundle: DocumentationBundle) throws {
+        func dataProvider(_ dataProvider: DocumentationContextDataProvider, didAddBundle bundle: DocumentationBundle, experimentalSymbolsClassDiagramExport: Bools = false) throws {
             record.append(.add(bundle.identifier))
         }
         
