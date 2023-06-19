@@ -12,7 +12,7 @@ import Foundation
 
 extension RenderNode: Codable {
     private enum CodingKeys: CodingKey {
-        case schemaVersion, identifier, sections, references, metadata, kind, hierarchy
+        case schemaVersion, identifier, sections, references, metadata, kind, hierarchy, graphRepresentation
         case abstract, topicSections, topicSectionsStyle, defaultImplementationsSections, primaryContentSections, relationshipsSections, declarationSections, seeAlsoSections, returnsSection, parametersSection, sampleCodeDownload, downloadNotAvailableSummary, deprecationSummary, diffAvailability, interfaceLanguage, variants, variantOverrides
     }
     
@@ -83,7 +83,7 @@ extension RenderNode: Codable {
         if topicSectionsStyle != .list {
             try container.encode(topicSectionsStyle, forKey: .topicSectionsStyle)
         }
-        
+        try container.encode(graphRepresentation, forKey: .graphRepresentation)
         try container.encodeVariantCollection(abstractVariants, forKey: .abstract, encoder: encoder)
         
         try container.encodeVariantCollectionIfNotEmpty(topicSectionsVariants, forKey: .topicSections, encoder: encoder)
