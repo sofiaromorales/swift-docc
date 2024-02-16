@@ -59,6 +59,10 @@ public struct PlatformName: Codable, Hashable, Equatable {
     /// Apple's tvOS operating system.
     public static let tvOS = PlatformName(rawValue: "tvOS")
     public static let tvOSAppExtension = PlatformName(rawValue: "tvOSAppExtension", displayName: "tvOS App Extension")
+    /// Apple's visionOS operating system.
+    public static let visionOS = PlatformName(rawValue: "visionOS")
+    /// An app extension for Apple's visionOS operating system.
+    public static let visionOSAppExtension = PlatformName(rawValue: "visionOSAppExtension", displayName: "visionOS App Extension")
     /// A Linux-based operating system, but not a specific distribution.
     public static let linux = PlatformName(rawValue: "linux")
     /// The Catalyst platform.
@@ -74,6 +78,7 @@ public struct PlatformName: Codable, Hashable, Equatable {
         .catalyst, .catalystOSAppExtension,
         .tvOS, .tvOSAppExtension,
         .watchOS, .watchOSAppExtension,
+        .visionOS, .visionOSAppExtension,
         .swift
     ]
     
