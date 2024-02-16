@@ -50,11 +50,11 @@ extension Metadata {
         public enum Platform: RawRepresentable, Hashable, DirectiveArgumentValueConvertible {
             // FIXME: re-add `case any = "*"` when `isBeta` and `isDeprecated` are implemented
             // cf. https://github.com/apple/swift-docc/issues/441
-            case macOS, iOS, watchOS, tvOS
+            case macOS, iOS, watchOS, tvOS, visionOS
 
             case other(String)
 
-            static var defaultCases: [Platform] = [.macOS, .iOS, .watchOS, .tvOS]
+            static var defaultCases: [Platform] = [.macOS, .iOS, .watchOS, .tvOS, .visionOS]
 
             public init?(rawValue: String) {
                 for platform in Self.defaultCases {
@@ -77,6 +77,7 @@ extension Metadata {
                 case .iOS: return "iOS"
                 case .watchOS: return "watchOS"
                 case .tvOS: return "tvOS"
+                case .visionOS: return "visionOS"
                 case .other(let platform): return platform
                 }
             }

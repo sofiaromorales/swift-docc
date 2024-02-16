@@ -259,12 +259,13 @@ public struct Platform: Hashable, CustomStringConvertible, Codable, Equatable {
         public static let watchOS = Platform.Name(name: "watchOS", mask: 1 << 3)
         public static let tvOS = Platform.Name(name: "tvOS", mask: 1 << 4)
         public static let macCatalyst = Platform.Name(name: "Mac Catalyst", mask: 1 << 5)
+        public static let visionOS = Platform.Name(name: "visionOS", mask: 1 << 6)
         
         // A mask including all the platforms
         public static let any = Platform.Name(name: "all", mask: ID.max)
         
         // A set containing all the Apple's pre-defined platforms
-        public static let apple = Set([Platform.Name.xcode, Platform.Name.macOS, Platform.Name.iOS, Platform.Name.watchOS, Platform.Name.watchOS, Platform.Name.tvOS, Platform.Name.macCatalyst])
+        public static let apple = Set([Platform.Name.xcode, Platform.Name.macOS, Platform.Name.iOS, Platform.Name.watchOS, Platform.Name.tvOS, Platform.Name.macCatalyst, Platform.Name.visionOS])
         
         // A set containing all the default platforms
         public static let all = Set([Platform.Name.undefined] + Platform.Name.apple)
@@ -284,6 +285,8 @@ public struct Platform: Hashable, CustomStringConvertible, Codable, Equatable {
                 return .tvOS
             case "mac catalyst":
                 return .macCatalyst
+            case "visionos":
+                return .visionOS
             default:
                 return .undefined
             }
