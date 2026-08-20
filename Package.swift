@@ -58,6 +58,7 @@ let package = Package(
             name: "SwiftDocC",
             dependencies: [
                 .target(name: "DocCCommon"),
+                .target(name: "CConstants"),
                 .target(name: "DocCHTML"),
                 .product(name: "Markdown", package: "swift-markdown"),
                 .product(name: "SymbolKit", package: "swift-docc-symbolkit"),
@@ -150,7 +151,10 @@ let package = Package(
             ],
             swiftSettings: swiftSettings(.v6)
         ),
-
+        .target(
+            name: "CConstants",
+            cSettings: [.define("DOCC_GIT_COMMIT_HASH", to: { "\"\(Context.gitInformation?.currentCommit ?? "unknown")\"" }())],
+        ),
         .target(
             name: "DocCHTML",
             dependencies: [
